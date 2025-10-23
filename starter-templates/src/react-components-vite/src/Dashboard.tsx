@@ -11,7 +11,6 @@ import {
   DialogContent,
   DialogSurface,
   DialogTitle,
-  DialogTrigger,
   Field,
   Input,
   Label,
