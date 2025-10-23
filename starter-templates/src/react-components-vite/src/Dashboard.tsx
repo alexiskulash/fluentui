@@ -319,7 +319,7 @@ export default function Dashboard() {
               image={<TeamIcon />}
             />
             <Title1>6</Title1>
-            <ProgressBar thickness="large" value={60} />
+            <ProgressBar thickness="large" value={60} max={100} />
           </Card>
           <Card className={styles.kpiCard}>
             <CardHeader
@@ -337,7 +337,7 @@ export default function Dashboard() {
               image={<ActivityIcon />}
             />
             <Title1>2</Title1>
-            <ProgressBar color="warning" value={40} />
+            <ProgressBar color="warning" value={40} max={100} />
           </Card>
           <Card className={styles.kpiCard}>
             <CardHeader
@@ -420,7 +420,7 @@ export default function Dashboard() {
                     <TableCell>{formatCurrency(row.mrr)}</TableCell>
                     <TableCell>
                       <div className={styles.rowGapXS}>
-                        <ProgressBar value={row.health} />
+                        <ProgressBar value={row.health} max={100} />
                         <Caption1>{row.health}%</Caption1>
                       </div>
                     </TableCell>
@@ -464,7 +464,7 @@ export default function Dashboard() {
                     <Field label="Created"><Input readOnly value={new Date(selected.createdAt).toLocaleDateString()} /></Field>
                   </div>
                   <Field label="Health">
-                    <ProgressBar value={selected.health} />
+                    <ProgressBar value={selected.health} max={100} />
                   </Field>
                   <div className={styles.footerActions}>
                     <Button appearance="secondary" onClick={() => setSelected(null)} icon={<DismissIcon />}>Close</Button>
