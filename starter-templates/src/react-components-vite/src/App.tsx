@@ -1,10 +1,10 @@
 import { FluentProvider, webLightTheme } from '@fluentui/react-components';
-import { Example } from './Example';
+import Dashboard from './Dashboard';
 
 const App = () => {
   return (
     <FluentProvider theme={webLightTheme}>
-      <Example />
+      <Dashboard />
     </FluentProvider>
   );
 };
