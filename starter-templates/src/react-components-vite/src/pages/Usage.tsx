@@ -21,7 +21,15 @@ import {
   tokens,
   shorthands,
 } from '@fluentui/react-components';
-import { bundleIcon, SearchFilled, SearchRegular, DataBarVerticalFilled, DataBarVerticalRegular, FilterFilled, FilterRegular } from '@fluentui/react-icons';
+import {
+  bundleIcon,
+  SearchFilled,
+  SearchRegular,
+  DataBarVerticalFilled,
+  DataBarVerticalRegular,
+  FilterFilled,
+  FilterRegular,
+} from '@fluentui/react-icons';
 import { sampleData } from '../data/accounts';
 
 const SearchIcon = bundleIcon(SearchFilled, SearchRegular);
@@ -33,13 +41,22 @@ const useStyles = makeStyles({
   headerRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
   kpiGrid: { display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: tokens.spacingHorizontalL },
   kpiCard: { gridColumn: 'span 4' },
-  filters: { display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: tokens.spacingHorizontalL, alignItems: 'end' },
+  filters: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(12, 1fr)',
+    gap: tokens.spacingHorizontalL,
+    alignItems: 'end',
+  },
   gridSpan3: { gridColumn: 'span 3' },
   gridSpan4: { gridColumn: 'span 4' },
   gridSpan2: { gridColumn: 'span 2' },
   endAlign: { display: 'flex', justifyContent: 'flex-end' },
   tableCard: { display: 'flex', flexDirection: 'column' },
-  tableScroll: { overflow: 'auto', ...shorthands.border(tokens.strokeWidthThin, 'solid', tokens.colorNeutralStroke2), ...shorthands.borderRadius(tokens.borderRadiusMedium) },
+  tableScroll: {
+    overflow: 'auto',
+    ...shorthands.border(tokens.strokeWidthThin, 'solid', tokens.colorNeutralStroke2),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+  },
   toolbar: { display: 'flex', gap: tokens.spacingHorizontalS },
 });
 
@@ -76,7 +93,9 @@ export default function Usage() {
         if (!query) return true;
         const company = index.get(r.id) || '';
         const q = query.toLowerCase();
-        return r.id.toLowerCase().includes(q) || company.toLowerCase().includes(q) || r.product.toLowerCase().includes(q);
+        return (
+          r.id.toLowerCase().includes(q) || company.toLowerCase().includes(q) || r.product.toLowerCase().includes(q)
+        );
       })
       .map(r => ({ ...r, company: index.get(r.id) || r.id }));
     return list;
@@ -92,29 +111,48 @@ export default function Usage() {
       <div className={styles.headerRow}>
         <Title1>Usage</Title1>
         <div className={styles.toolbar}>
-          <Button appearance="secondary" icon={<FilterIcon />}>Export CSV</Button>
+          <Button appearance="secondary" icon={<FilterIcon />}>
+            Export CSV
+          </Button>
           <Button appearance="primary">Create Report</Button>
         </div>
       </div>
 
       <section className={styles.kpiGrid}>
         <Card className={styles.kpiCard}>
-          <CardHeader header={<Subtitle2>Total Events</Subtitle2>} description={<Caption1>In selected range</Caption1>} image={<ActivityIcon />} />
+          <CardHeader
+            header={<Subtitle2>Total Events</Subtitle2>}
+            description={<Caption1>In selected range</Caption1>}
+            image={<ActivityIcon />}
+          />
           <Title1>{new Intl.NumberFormat().format(totalEvents)}</Title1>
         </Card>
         <Card className={styles.kpiCard}>
-          <CardHeader header={<Subtitle2>Active Accounts</Subtitle2>} description={<Caption1>With activity</Caption1>} image={<ActivityIcon />} />
+          <CardHeader
+            header={<Subtitle2>Active Accounts</Subtitle2>}
+            description={<Caption1>With activity</Caption1>}
+            image={<ActivityIcon />}
+          />
           <Title1>{activeAccounts}</Title1>
         </Card>
         <Card className={styles.kpiCard}>
-          <CardHeader header={<Subtitle2>Avg Daily Events</Subtitle2>} description={<Caption1>Across results</Caption1>} image={<ActivityIcon />} />
+          <CardHeader
+            header={<Subtitle2>Avg Daily Events</Subtitle2>}
+            description={<Caption1>Across results</Caption1>}
+            image={<ActivityIcon />}
+          />
           <Title1>{new Intl.NumberFormat().format(avgDaily)}</Title1>
         </Card>
       </section>
 
       <div className={styles.filters}>
         <Field label="Search" className={styles.gridSpan4}>
-          <Input contentBefore={<SearchIcon />} placeholder="Search company, id or product" value={query} onChange={(_, d) => setQuery(d.value)} />
+          <Input
+            contentBefore={<SearchIcon />}
+            placeholder="Search company, id or product"
+            value={query}
+            onChange={(_, d) => setQuery(d.value)}
+          />
         </Field>
         <Field label="Product" className={styles.gridSpan3}>
           <Select value={product} onChange={(_, d) => setProduct(d.value as any)}>
@@ -128,7 +166,9 @@ export default function Usage() {
           <Slider value={minAvg} onChange={(_, d) => setMinAvg(d.value as number)} min={0} max={600} step={10} />
         </Field>
         <div className={`${styles.gridSpan2} ${styles.endAlign}`}>
-          <Button appearance="secondary" icon={<FilterIcon />}>Apply</Button>
+          <Button appearance="secondary" icon={<FilterIcon />}>
+            Apply
+          </Button>
         </div>
       </div>
 
@@ -149,7 +189,9 @@ export default function Usage() {
               {rows.map(r => (
                 <TableRow key={`${r.id}-${r.product}`}>
                   <TableCell>{r.company}</TableCell>
-                  <TableCell><Badge>{r.product}</Badge></TableCell>
+                  <TableCell>
+                    <Badge>{r.product}</Badge>
+                  </TableCell>
                   <TableCell>{new Intl.NumberFormat().format(r.events)}</TableCell>
                   <TableCell>{new Intl.NumberFormat().format(r.avgPerDay)}</TableCell>
                   <TableCell>

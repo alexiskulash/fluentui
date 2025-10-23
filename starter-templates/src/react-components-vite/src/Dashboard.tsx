@@ -212,13 +212,16 @@ const useStyles = makeStyles({
   },
 });
 
-
-
-const formatCurrency = (v: number) => new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
+const formatCurrency = (v: number) =>
+  new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
 
 const StatusBadge = ({ status }: { status: Account['status'] }) => {
   const color = status === 'Active' ? 'success' : status === 'Churn Risk' ? 'danger' : 'informative';
-  return <Badge appearance="filled" color={color as any}>{status}</Badge>;
+  return (
+    <Badge appearance="filled" color={color as any}>
+      {status}
+    </Badge>
+  );
 };
 
 export default function Dashboard() {
@@ -233,10 +236,15 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
   const pageSize = 6;
   const [selected, setSelected] = useState<Account | null>(null);
-  const [route, setRoute] = useState<'home' | 'accounts' | 'usage'>(() => (location.hash.startsWith('#/accounts') ? 'accounts' : location.hash.startsWith('#/usage') ? 'usage' : 'home'));
+  const [route, setRoute] = useState<'home' | 'accounts' | 'usage'>(() =>
+    location.hash.startsWith('#/accounts') ? 'accounts' : location.hash.startsWith('#/usage') ? 'usage' : 'home',
+  );
 
   useEffect(() => {
-    const onHash = () => setRoute(location.hash.startsWith('#/accounts') ? 'accounts' : location.hash.startsWith('#/usage') ? 'usage' : 'home');
+    const onHash = () =>
+      setRoute(
+        location.hash.startsWith('#/accounts') ? 'accounts' : location.hash.startsWith('#/usage') ? 'usage' : 'home',
+      );
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
@@ -245,7 +253,9 @@ export default function Dashboard() {
     let rows = sampleData.slice();
     if (query) {
       const q = query.toLowerCase();
-      rows = rows.filter(r => r.company.toLowerCase().includes(q) || r.owner.toLowerCase().includes(q) || r.id.toLowerCase().includes(q));
+      rows = rows.filter(
+        r => r.company.toLowerCase().includes(q) || r.owner.toLowerCase().includes(q) || r.id.toLowerCase().includes(q),
+      );
     }
     if (status !== 'All') rows = rows.filter(r => r.status === status);
     if (healthMin > 0) rows = rows.filter(r => r.health >= healthMin);
@@ -275,26 +285,65 @@ export default function Dashboard() {
         </div>
         <div className={styles.navGroup}>
           <Label className={styles.navLabel}>Overview</Label>
-          <Button appearance="transparent" icon={<PanelIcon />} className={styles.navButton} onClick={() => (location.hash = '/')}>Home</Button>
-          <Button appearance="transparent" icon={<TeamIcon />} className={styles.navButton} onClick={() => (location.hash = '/accounts')}>Accounts</Button>
-          <Button appearance="transparent" icon={<ActivityIcon />} className={styles.navButton} onClick={() => (location.hash = '/usage')}>Usage</Button>
+          <Button
+            appearance="transparent"
+            icon={<PanelIcon />}
+            className={styles.navButton}
+            onClick={() => (location.hash = '/')}
+          >
+            Home
+          </Button>
+          <Button
+            appearance="transparent"
+            icon={<TeamIcon />}
+            className={styles.navButton}
+            onClick={() => (location.hash = '/accounts')}
+          >
+            Accounts
+          </Button>
+          <Button
+            appearance="transparent"
+            icon={<ActivityIcon />}
+            className={styles.navButton}
+            onClick={() => (location.hash = '/usage')}
+          >
+            Usage
+          </Button>
         </div>
         <div className={styles.navGroup}>
           <Label className={styles.navLabel}>Billing</Label>
-          <Button appearance="transparent" icon={<MrrIcon />} className={styles.navButton}>Revenue</Button>
+          <Button appearance="transparent" icon={<MrrIcon />} className={styles.navButton}>
+            Revenue
+          </Button>
         </div>
       </aside>
 
       <header className={styles.headerBar}>
         <div className={styles.searchRow}>
           <Field label="Search" htmlFor={qId} className={styles.flexGrow}>
-            <Input id={qId} contentBefore={<SearchIcon />} placeholder="Search accounts, owners, or IDs" value={query} onChange={(_, d) => { setQuery(d.value); setPage(1); }} />
+            <Input
+              id={qId}
+              contentBefore={<SearchIcon />}
+              placeholder="Search accounts, owners, or IDs"
+              value={query}
+              onChange={(_, d) => {
+                setQuery(d.value);
+                setPage(1);
+              }}
+            />
           </Field>
           <Toolbar aria-label="actions">
-            <ToolbarButton icon={<FilterIcon />} onClick={() => { /* filters visible by default */ }}>
+            <ToolbarButton
+              icon={<FilterIcon />}
+              onClick={() => {
+                /* filters visible by default */
+              }}
+            >
               Filters
             </ToolbarButton>
-            <ToolbarButton appearance="primary" icon={<AddIcon />}>New</ToolbarButton>
+            <ToolbarButton appearance="primary" icon={<AddIcon />}>
+              New
+            </ToolbarButton>
           </Toolbar>
         </div>
       </header>
@@ -302,136 +351,178 @@ export default function Dashboard() {
       <main className={styles.content}>
         {route === 'home' ? (
           <>
-        <section className={styles.kpiGrid}>
-          <Card className={styles.kpiCard}>
-            <CardHeader
-              header={<Subtitle2>Active Accounts</Subtitle2>}
-              description={<Caption1>Currently billed customers</Caption1>}
-              image={<TeamIcon />}
-            />
-            <Title1>6</Title1>
-            <ProgressBar thickness="large" value={60} max={100} />
-          </Card>
-          <Card className={styles.kpiCard}>
-            <CardHeader
-              header={<Subtitle2>Monthly Recurring Revenue</Subtitle2>}
-              description={<Caption1>All active subscriptions</Caption1>}
-              image={<MrrIcon />}
-            />
-            <Title1>{formatCurrency(65700)}</Title1>
-            <Caption1>+8% MoM</Caption1>
-          </Card>
-          <Card className={styles.kpiCard}>
-            <CardHeader
-              header={<Subtitle2>Churn Risk</Subtitle2>}
-              description={<Caption1>Requires attention</Caption1>}
-              image={<ActivityIcon />}
-            />
-            <Title1>2</Title1>
-            <ProgressBar color="warning" value={40} max={100} />
-          </Card>
-          <Card className={styles.kpiCard}>
-            <CardHeader
-              header={<Subtitle2>Prospects</Subtitle2>}
-              description={<Caption1>In pipeline</Caption1>}
-              image={<AddIcon />}
-            />
-            <Title1>3</Title1>
-            <Caption1>2 added this week</Caption1>
-          </Card>
-        </section>
+            <section className={styles.kpiGrid}>
+              <Card className={styles.kpiCard}>
+                <CardHeader
+                  header={<Subtitle2>Active Accounts</Subtitle2>}
+                  description={<Caption1>Currently billed customers</Caption1>}
+                  image={<TeamIcon />}
+                />
+                <Title1>6</Title1>
+                <ProgressBar thickness="large" value={60} max={100} />
+              </Card>
+              <Card className={styles.kpiCard}>
+                <CardHeader
+                  header={<Subtitle2>Monthly Recurring Revenue</Subtitle2>}
+                  description={<Caption1>All active subscriptions</Caption1>}
+                  image={<MrrIcon />}
+                />
+                <Title1>{formatCurrency(65700)}</Title1>
+                <Caption1>+8% MoM</Caption1>
+              </Card>
+              <Card className={styles.kpiCard}>
+                <CardHeader
+                  header={<Subtitle2>Churn Risk</Subtitle2>}
+                  description={<Caption1>Requires attention</Caption1>}
+                  image={<ActivityIcon />}
+                />
+                <Title1>2</Title1>
+                <ProgressBar color="warning" value={40} max={100} />
+              </Card>
+              <Card className={styles.kpiCard}>
+                <CardHeader
+                  header={<Subtitle2>Prospects</Subtitle2>}
+                  description={<Caption1>In pipeline</Caption1>}
+                  image={<AddIcon />}
+                />
+                <Title1>3</Title1>
+                <Caption1>2 added this week</Caption1>
+              </Card>
+            </section>
 
-        <section className={styles.filtersBar}>
-          <Field label="Status" className={styles.gridSpan3}>
-            <Select value={status} onChange={(_, d) => { setStatus(d.value as any); setPage(1); }}>
-              <option value="All">All</option>
-              <option value="Active">Active</option>
-              <option value="Churn Risk">Churn Risk</option>
-              <option value="Prospect">Prospect</option>
-            </Select>
-          </Field>
-          <Field label={`Min Health: ${healthMin}%`} className={styles.gridSpan4}>
-            <Slider value={healthMin} onChange={(_, d) => { setHealthMin(d.value as number); setPage(1); }} step={5} min={0} max={100} />
-          </Field>
-          <Field label="Assigned to me" className={styles.gridSpan3}>
-            <Switch checked={onlyAssignedToMe} onChange={(_, d) => { setOnlyAssignedToMe(!!d.checked); setPage(1); }} />
-          </Field>
-          <div className={`${styles.gridSpan2} ${styles.endAlign}`}>
-            <Button appearance="secondary" icon={<FilterIcon />}>Apply</Button>
-          </div>
-        </section>
+            <section className={styles.filtersBar}>
+              <Field label="Status" className={styles.gridSpan3}>
+                <Select
+                  value={status}
+                  onChange={(_, d) => {
+                    setStatus(d.value as any);
+                    setPage(1);
+                  }}
+                >
+                  <option value="All">All</option>
+                  <option value="Active">Active</option>
+                  <option value="Churn Risk">Churn Risk</option>
+                  <option value="Prospect">Prospect</option>
+                </Select>
+              </Field>
+              <Field label={`Min Health: ${healthMin}%`} className={styles.gridSpan4}>
+                <Slider
+                  value={healthMin}
+                  onChange={(_, d) => {
+                    setHealthMin(d.value as number);
+                    setPage(1);
+                  }}
+                  step={5}
+                  min={0}
+                  max={100}
+                />
+              </Field>
+              <Field label="Assigned to me" className={styles.gridSpan3}>
+                <Switch
+                  checked={onlyAssignedToMe}
+                  onChange={(_, d) => {
+                    setOnlyAssignedToMe(!!d.checked);
+                    setPage(1);
+                  }}
+                />
+              </Field>
+              <div className={`${styles.gridSpan2} ${styles.endAlign}`}>
+                <Button appearance="secondary" icon={<FilterIcon />}>
+                  Apply
+                </Button>
+              </div>
+            </section>
 
-        <Card className={styles.tableCard}>
-          <div className={styles.tableHeaderRow}>
-            <Subtitle2>Accounts</Subtitle2>
-            <TabList
-              selectedValue={sortBy}
-              onTabSelect={(_, d) => setSortBy(d.value as any)}
-              appearance="subtle"
-            >
-              <Tab icon={<SortIcon />} value="company">Name</Tab>
-              <Tab icon={<SortIcon />} value="mrr">MRR</Tab>
-              <Tab icon={<SortIcon />} value="health">Health</Tab>
-              <Tab icon={<SortIcon />} value="createdAt">Created</Tab>
-            </TabList>
-          </div>
+            <Card className={styles.tableCard}>
+              <div className={styles.tableHeaderRow}>
+                <Subtitle2>Accounts</Subtitle2>
+                <TabList selectedValue={sortBy} onTabSelect={(_, d) => setSortBy(d.value as any)} appearance="subtle">
+                  <Tab icon={<SortIcon />} value="company">
+                    Name
+                  </Tab>
+                  <Tab icon={<SortIcon />} value="mrr">
+                    MRR
+                  </Tab>
+                  <Tab icon={<SortIcon />} value="health">
+                    Health
+                  </Tab>
+                  <Tab icon={<SortIcon />} value="createdAt">
+                    Created
+                  </Tab>
+                </TabList>
+              </div>
 
-          <div className={styles.tableHeaderRow}>
-            <div />
-            <Button size="small" onClick={() => setSortDir(sortDir === 'asc' ? 'desc' : 'asc')} icon={<SortIcon />}>
-              {sortDir === 'asc' ? 'Ascending' : 'Descending'}
-            </Button>
-          </div>
+              <div className={styles.tableHeaderRow}>
+                <div />
+                <Button size="small" onClick={() => setSortDir(sortDir === 'asc' ? 'desc' : 'asc')} icon={<SortIcon />}>
+                  {sortDir === 'asc' ? 'Ascending' : 'Descending'}
+                </Button>
+              </div>
 
-          <div className={styles.tableScroll}>
-            <Table aria-label="Accounts table">
-              <TableHeader>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Company</TableCell>
-                  <TableCell>Owner</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>MRR</TableCell>
-                  <TableCell>Health</TableCell>
-                  <TableCell>Created</TableCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pageRows.map(row => (
-                  <TableRow key={row.id} role="row" onClick={() => setSelected(row)} className={styles.clickableRow}>
-                    <TableCell>{row.id}</TableCell>
-                    <TableCell>
-                      <div className={styles.companyCell}>
-                        <Avatar name={row.company} size={24} />
-                        {row.company}
-                      </div>
-                    </TableCell>
-                    <TableCell>{row.owner}</TableCell>
-                    <TableCell><StatusBadge status={row.status} /></TableCell>
-                    <TableCell>{formatCurrency(row.mrr)}</TableCell>
-                    <TableCell>
-                      <div className={styles.rowGapXS}>
-                        <ProgressBar value={row.health} max={100} />
-                        <Caption1>{row.health}%</Caption1>
-                      </div>
-                    </TableCell>
-                    <TableCell>{new Date(row.createdAt).toLocaleDateString()}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+              <div className={styles.tableScroll}>
+                <Table aria-label="Accounts table">
+                  <TableHeader>
+                    <TableRow>
+                      <TableCell>ID</TableCell>
+                      <TableCell>Company</TableCell>
+                      <TableCell>Owner</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>MRR</TableCell>
+                      <TableCell>Health</TableCell>
+                      <TableCell>Created</TableCell>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {pageRows.map(row => (
+                      <TableRow
+                        key={row.id}
+                        role="row"
+                        onClick={() => setSelected(row)}
+                        className={styles.clickableRow}
+                      >
+                        <TableCell>{row.id}</TableCell>
+                        <TableCell>
+                          <div className={styles.companyCell}>
+                            <Avatar name={row.company} size={24} />
+                            {row.company}
+                          </div>
+                        </TableCell>
+                        <TableCell>{row.owner}</TableCell>
+                        <TableCell>
+                          <StatusBadge status={row.status} />
+                        </TableCell>
+                        <TableCell>{formatCurrency(row.mrr)}</TableCell>
+                        <TableCell>
+                          <div className={styles.rowGapXS}>
+                            <ProgressBar value={row.health} max={100} />
+                            <Caption1>{row.health}%</Caption1>
+                          </div>
+                        </TableCell>
+                        <TableCell>{new Date(row.createdAt).toLocaleDateString()}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
 
-          <div className={styles.pager}>
-            <Caption1>
-              Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, filtered.length)} of {filtered.length}
-            </Caption1>
-            <div className={styles.gapSRow}>
-              <Button size="small" disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Previous</Button>
-              <Button size="small" disabled={page === totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>Next</Button>
-            </div>
-          </div>
-        </Card>
+              <div className={styles.pager}>
+                <Caption1>
+                  Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, filtered.length)} of {filtered.length}
+                </Caption1>
+                <div className={styles.gapSRow}>
+                  <Button size="small" disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))}>
+                    Previous
+                  </Button>
+                  <Button
+                    size="small"
+                    disabled={page === totalPages}
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            </Card>
           </>
         ) : route === 'accounts' ? (
           <Accounts />
@@ -455,16 +546,26 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className={styles.detailsGrid}>
-                    <Field label="Owner"><Input readOnly value={selected.owner} /></Field>
-                    <Field label="Status"><Input readOnly value={selected.status} /></Field>
-                    <Field label="MRR"><Input readOnly value={formatCurrency(selected.mrr)} /></Field>
-                    <Field label="Created"><Input readOnly value={new Date(selected.createdAt).toLocaleDateString()} /></Field>
+                    <Field label="Owner">
+                      <Input readOnly value={selected.owner} />
+                    </Field>
+                    <Field label="Status">
+                      <Input readOnly value={selected.status} />
+                    </Field>
+                    <Field label="MRR">
+                      <Input readOnly value={formatCurrency(selected.mrr)} />
+                    </Field>
+                    <Field label="Created">
+                      <Input readOnly value={new Date(selected.createdAt).toLocaleDateString()} />
+                    </Field>
                   </div>
                   <Field label="Health">
                     <ProgressBar value={selected.health} max={100} />
                   </Field>
                   <div className={styles.footerActions}>
-                    <Button appearance="secondary" onClick={() => setSelected(null)} icon={<DismissIcon />}>Close</Button>
+                    <Button appearance="secondary" onClick={() => setSelected(null)} icon={<DismissIcon />}>
+                      Close
+                    </Button>
                     <Button appearance="primary">Open Account</Button>
                   </div>
                 </div>

@@ -71,7 +71,9 @@ export default function Accounts() {
     let rows = sampleData.slice();
     if (query) {
       const q = query.toLowerCase();
-      rows = rows.filter(r => r.company.toLowerCase().includes(q) || r.owner.toLowerCase().includes(q) || r.id.toLowerCase().includes(q));
+      rows = rows.filter(
+        r => r.company.toLowerCase().includes(q) || r.owner.toLowerCase().includes(q) || r.id.toLowerCase().includes(q),
+      );
     }
     if (status !== 'All') rows = rows.filter(r => r.status === status);
     if (healthMin > 0) rows = rows.filter(r => r.health >= healthMin);
@@ -83,14 +85,21 @@ export default function Accounts() {
       <div className={styles.headerRow}>
         <Title1>Accounts</Title1>
         <div className={styles.toolbar}>
-          <Button appearance="secondary" icon={<FilterIcon />}>Export CSV</Button>
+          <Button appearance="secondary" icon={<FilterIcon />}>
+            Export CSV
+          </Button>
           <Button appearance="primary">New Account</Button>
         </div>
       </div>
 
       <div className={styles.filters}>
         <Field label="Search" className={styles.gridSpan4}>
-          <Input contentBefore={<SearchIcon />} placeholder="Search accounts" value={query} onChange={(_, d) => setQuery(d.value)} />
+          <Input
+            contentBefore={<SearchIcon />}
+            placeholder="Search accounts"
+            value={query}
+            onChange={(_, d) => setQuery(d.value)}
+          />
         </Field>
         <Field label="Status" className={styles.gridSpan3}>
           <Select value={status} onChange={(_, d) => setStatus(d.value as any)}>
@@ -104,7 +113,9 @@ export default function Accounts() {
           <Slider value={healthMin} onChange={(_, d) => setHealthMin(d.value as number)} step={5} min={0} max={100} />
         </Field>
         <div className={`${styles.gridSpan3} ${styles.endAlign}`}>
-          <Button appearance="secondary" icon={<FilterIcon />}>Apply</Button>
+          <Button appearance="secondary" icon={<FilterIcon />}>
+            Apply
+          </Button>
         </div>
       </div>
 
@@ -133,8 +144,16 @@ export default function Accounts() {
                     </div>
                   </TableCell>
                   <TableCell>{row.owner}</TableCell>
-                  <TableCell><Label>{row.status}</Label></TableCell>
-                  <TableCell>{new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(row.mrr)}</TableCell>
+                  <TableCell>
+                    <Label>{row.status}</Label>
+                  </TableCell>
+                  <TableCell>
+                    {new Intl.NumberFormat(undefined, {
+                      style: 'currency',
+                      currency: 'USD',
+                      maximumFractionDigits: 0,
+                    }).format(row.mrr)}
+                  </TableCell>
                   <TableCell>
                     <div className={styles.rowGapXS}>
                       <ProgressBar value={row.health} max={100} />
