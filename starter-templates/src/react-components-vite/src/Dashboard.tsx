@@ -182,6 +182,18 @@ const useStyles = makeStyles({
     display: 'grid',
     gap: tokens.spacingVerticalM,
   },
+  flexGrow: { flex: 1 },
+  gridSpan3: { gridColumn: 'span 3' },
+  gridSpan4: { gridColumn: 'span 4' },
+  gridSpan2: { gridColumn: 'span 2' },
+  endAlign: { display: 'flex', justifyContent: 'flex-end' },
+  clickableRow: { cursor: 'pointer' },
+  companyCell: { display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalS },
+  detailsGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: tokens.spacingHorizontalL },
+  footerActions: { display: 'flex', justifyContent: 'flex-end', gap: tokens.spacingHorizontalS },
+  rowGapXS: { display: 'grid', gap: tokens.spacingVerticalXS },
+  rowGapM: { display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalM },
+  gapSRow: { display: 'flex', gap: tokens.spacingHorizontalS },
   responsive: {
     '@media (max-width: 1080px)': {
       gridTemplateColumns: '72px 1fr',
@@ -286,7 +298,7 @@ export default function Dashboard() {
 
       <header className={styles.headerBar}>
         <div className={styles.searchRow}>
-          <Field label="Search" htmlFor={qId} style={{ flex: 1 }}>
+          <Field label="Search" htmlFor={qId} className={styles.flexGrow}>
             <Input id={qId} contentBefore={<SearchIcon />} placeholder="Search accounts, owners, or IDs" value={query} onChange={(_, d) => { setQuery(d.value); setPage(1); }} />
           </Field>
           <Toolbar aria-label="actions">
@@ -339,7 +351,7 @@ export default function Dashboard() {
         </section>
 
         <section className={styles.filtersBar}>
-          <Field label="Status" style={{ gridColumn: 'span 3' }}>
+          <Field label="Status" className={styles.gridSpan3}>
             <Select value={status} onChange={(_, d) => { setStatus(d.value as any); setPage(1); }}>
               <option value="All">All</option>
               <option value="Active">Active</option>
@@ -347,13 +359,13 @@ export default function Dashboard() {
               <option value="Prospect">Prospect</option>
             </Select>
           </Field>
-          <Field label={`Min Health: ${healthMin}%`} style={{ gridColumn: 'span 4' }}>
+          <Field label={`Min Health: ${healthMin}%`} className={styles.gridSpan4}>
             <Slider value={healthMin} onChange={(_, d) => { setHealthMin(d.value as number); setPage(1); }} step={5} min={0} max={100} />
           </Field>
-          <Field label="Assigned to me" style={{ gridColumn: 'span 3' }}>
+          <Field label="Assigned to me" className={styles.gridSpan3}>
             <Switch checked={onlyAssignedToMe} onChange={(_, d) => { setOnlyAssignedToMe(!!d.checked); setPage(1); }} />
           </Field>
-          <div style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'flex-end' }}>
+          <div className={`${styles.gridSpan2} ${styles.endAlign}`}>
             <Button appearance="secondary" icon={<FilterIcon />}>Apply</Button>
           </div>
         </section>
@@ -395,10 +407,10 @@ export default function Dashboard() {
               </TableHeader>
               <TableBody>
                 {pageRows.map(row => (
-                  <TableRow key={row.id} role="row" onClick={() => setSelected(row)} style={{ cursor: 'pointer' }}>
+                  <TableRow key={row.id} role="row" onClick={() => setSelected(row)} className={styles.clickableRow}>
                     <TableCell>{row.id}</TableCell>
                     <TableCell>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalS }}>
+                      <div className={styles.companyCell}>
                         <Avatar name={row.company} size={24} />
                         {row.company}
                       </div>
@@ -407,7 +419,7 @@ export default function Dashboard() {
                     <TableCell><StatusBadge status={row.status} /></TableCell>
                     <TableCell>{formatCurrency(row.mrr)}</TableCell>
                     <TableCell>
-                      <div style={{ display: 'grid', gap: tokens.spacingVerticalXS }}>
+                      <div className={styles.rowGapXS}>
                         <ProgressBar value={row.health} />
                         <Caption1>{row.health}%</Caption1>
                       </div>
@@ -423,7 +435,7 @@ export default function Dashboard() {
             <Caption1>
               Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, filtered.length)} of {filtered.length}
             </Caption1>
-            <div style={{ display: 'flex', gap: tokens.spacingHorizontalS }}>
+            <div className={styles.gapSRow}>
               <Button size="small" disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Previous</Button>
               <Button size="small" disabled={page === totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>Next</Button>
             </div>
@@ -438,14 +450,14 @@ export default function Dashboard() {
             <DialogContent>
               {selected && (
                 <div className={styles.drawerBody}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalM }}>
+                  <div className={styles.rowGapM}>
                     <Avatar name={selected.company} size={40} />
                     <div>
                       <Subtitle2>{selected.company}</Subtitle2>
                       <Caption1>{selected.id}</Caption1>
                     </div>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: tokens.spacingHorizontalL }}>
+                  <div className={styles.detailsGrid}>
                     <Field label="Owner"><Input readOnly value={selected.owner} /></Field>
                     <Field label="Status"><Input readOnly value={selected.status} /></Field>
                     <Field label="MRR"><Input readOnly value={formatCurrency(selected.mrr)} /></Field>
@@ -454,7 +466,7 @@ export default function Dashboard() {
                   <Field label="Health">
                     <ProgressBar value={selected.health} />
                   </Field>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: tokens.spacingHorizontalS }}>
+                  <div className={styles.footerActions}>
                     <Button appearance="secondary" onClick={() => setSelected(null)} icon={<DismissIcon />}>Close</Button>
                     <Button appearance="primary">Open Account</Button>
                   </div>
