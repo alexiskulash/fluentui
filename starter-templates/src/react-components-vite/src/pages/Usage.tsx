@@ -40,6 +40,7 @@ const useStyles = makeStyles({
   endAlign: { display: 'flex', justifyContent: 'flex-end' },
   tableCard: { display: 'flex', flexDirection: 'column' },
   tableScroll: { overflow: 'auto', ...shorthands.border(tokens.strokeWidthThin, 'solid', tokens.colorNeutralStroke2), ...shorthands.borderRadius(tokens.borderRadiusMedium) },
+  toolbar: { display: 'flex', gap: tokens.spacingHorizontalS },
 });
 
 type UsageRow = {
@@ -90,7 +91,7 @@ export default function Usage() {
     <div className={styles.container}>
       <div className={styles.headerRow}>
         <Title1>Usage</Title1>
-        <div style={{ display: 'flex', gap: tokens.spacingHorizontalS }}>
+        <div className={styles.toolbar}>
           <Button appearance="secondary" icon={<FilterIcon />}>Export CSV</Button>
           <Button appearance="primary">Create Report</Button>
         </div>

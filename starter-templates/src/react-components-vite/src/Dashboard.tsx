@@ -35,6 +35,7 @@ import {
   Subtitle2,
 } from '@fluentui/react-components';
 import Accounts from './pages/Accounts';
+import Usage from './pages/Usage';
 import { Account, sampleData } from './data/accounts';
 import {
   bundleIcon,
@@ -232,10 +233,10 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
   const pageSize = 6;
   const [selected, setSelected] = useState<Account | null>(null);
-  const [route, setRoute] = useState<'home' | 'accounts'>(() => (location.hash.startsWith('#/accounts') ? 'accounts' : 'home'));
+  const [route, setRoute] = useState<'home' | 'accounts' | 'usage'>(() => (location.hash.startsWith('#/accounts') ? 'accounts' : location.hash.startsWith('#/usage') ? 'usage' : 'home'));
 
   useEffect(() => {
-    const onHash = () => setRoute(location.hash.startsWith('#/accounts') ? 'accounts' : 'home');
+    const onHash = () => setRoute(location.hash.startsWith('#/accounts') ? 'accounts' : location.hash.startsWith('#/usage') ? 'usage' : 'home');
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
@@ -276,7 +277,7 @@ export default function Dashboard() {
           <Label className={styles.navLabel}>Overview</Label>
           <Button appearance="transparent" icon={<PanelIcon />} className={styles.navButton} onClick={() => (location.hash = '/')}>Home</Button>
           <Button appearance="transparent" icon={<TeamIcon />} className={styles.navButton} onClick={() => (location.hash = '/accounts')}>Accounts</Button>
-          <Button appearance="transparent" icon={<ActivityIcon />} className={styles.navButton}>Usage</Button>
+          <Button appearance="transparent" icon={<ActivityIcon />} className={styles.navButton} onClick={() => (location.hash = '/usage')}>Usage</Button>
         </div>
         <div className={styles.navGroup}>
           <Label className={styles.navLabel}>Billing</Label>
@@ -432,8 +433,10 @@ export default function Dashboard() {
           </div>
         </Card>
           </>
-        ) : (
+        ) : route === 'accounts' ? (
           <Accounts />
+        ) : (
+          <Usage />
         )}
       </main>
 
