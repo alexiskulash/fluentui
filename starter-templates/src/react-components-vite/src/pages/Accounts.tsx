@@ -56,6 +56,8 @@ const useStyles = makeStyles({
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
   },
   toolbar: { display: 'flex', gap: tokens.spacingHorizontalS },
+  companyCell: { display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalS },
+  rowGapXS: { display: 'grid', gap: tokens.spacingVerticalXS },
 });
 
 export default function Accounts() {
@@ -125,7 +127,7 @@ export default function Accounts() {
                 <TableRow key={row.id}>
                   <TableCell>{row.id}</TableCell>
                   <TableCell>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: tokens.spacingHorizontalS }}>
+                    <div className={styles.companyCell}>
                       <Avatar name={row.company} size={24} />
                       {row.company}
                     </div>
@@ -134,7 +136,7 @@ export default function Accounts() {
                   <TableCell><Label>{row.status}</Label></TableCell>
                   <TableCell>{new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(row.mrr)}</TableCell>
                   <TableCell>
-                    <div style={{ display: 'grid', gap: tokens.spacingVerticalXS }}>
+                    <div className={styles.rowGapXS}>
                       <ProgressBar value={row.health} max={100} />
                       <Caption1>{row.health}%</Caption1>
                     </div>
