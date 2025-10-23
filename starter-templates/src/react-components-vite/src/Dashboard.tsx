@@ -34,6 +34,8 @@ import {
   useId,
   Subtitle2,
 } from '@fluentui/react-components';
+import Accounts from './pages/Accounts';
+import { Account, sampleData } from './data/accounts';
 import {
   bundleIcon,
   SearchFilled,
@@ -209,28 +211,7 @@ const useStyles = makeStyles({
   },
 });
 
-type Account = {
-  id: string;
-  company: string;
-  owner: string;
-  status: 'Active' | 'Churn Risk' | 'Prospect';
-  mrr: number;
-  createdAt: string; // ISO date
-  health: number; // 0-100
-};
 
-const sampleData: Account[] = [
-  { id: 'A-1001', company: 'Contoso Ltd', owner: 'Deborah', status: 'Active', mrr: 12400, createdAt: '2024-01-18', health: 86 },
-  { id: 'A-1002', company: 'Fabrikam', owner: 'Lee', status: 'Prospect', mrr: 0, createdAt: '2024-03-03', health: 48 },
-  { id: 'A-1003', company: 'Northwind Traders', owner: 'Jamal', status: 'Active', mrr: 8200, createdAt: '2023-11-09', health: 92 },
-  { id: 'A-1004', company: 'Adventure Works', owner: 'Priya', status: 'Churn Risk', mrr: 6100, createdAt: '2023-12-22', health: 34 },
-  { id: 'A-1005', company: 'Litware', owner: 'Nora', status: 'Active', mrr: 13900, createdAt: '2024-04-11', health: 75 },
-  { id: 'A-1006', company: 'Tailspin Toys', owner: 'Alex', status: 'Prospect', mrr: 0, createdAt: '2024-05-30', health: 57 },
-  { id: 'A-1007', company: 'Wingtip', owner: 'Diego', status: 'Active', mrr: 9800, createdAt: '2023-10-04', health: 81 },
-  { id: 'A-1008', company: 'Blue Yonder', owner: 'Mina', status: 'Churn Risk', mrr: 5400, createdAt: '2023-09-16', health: 29 },
-  { id: 'A-1009', company: 'Wide World Importers', owner: 'Chris', status: 'Active', mrr: 15300, createdAt: '2024-02-07', health: 64 },
-  { id: 'A-1010', company: 'Graphic Design Institute', owner: 'Ivy', status: 'Prospect', mrr: 0, createdAt: '2024-06-10', health: 53 },
-];
 
 const formatCurrency = (v: number) => new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
 
@@ -251,6 +232,13 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
   const pageSize = 6;
   const [selected, setSelected] = useState<Account | null>(null);
+  const [route, setRoute] = useState<'home' | 'accounts'>(() => (location.hash.startsWith('#/accounts') ? 'accounts' : 'home'));
+
+  useEffect(() => {
+    const onHash = () => setRoute(location.hash.startsWith('#/accounts') ? 'accounts' : 'home');
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
 
   const filtered = useMemo(() => {
     let rows = sampleData.slice();
@@ -286,8 +274,8 @@ export default function Dashboard() {
         </div>
         <div className={styles.navGroup}>
           <Label className={styles.navLabel}>Overview</Label>
-          <Button appearance="transparent" icon={<PanelIcon />} className={styles.navButton}>Home</Button>
-          <Button appearance="transparent" icon={<TeamIcon />} className={styles.navButton}>Accounts</Button>
+          <Button appearance="transparent" icon={<PanelIcon />} className={styles.navButton} onClick={() => (location.hash = '/')}>Home</Button>
+          <Button appearance="transparent" icon={<TeamIcon />} className={styles.navButton} onClick={() => (location.hash = '/accounts')}>Accounts</Button>
           <Button appearance="transparent" icon={<ActivityIcon />} className={styles.navButton}>Usage</Button>
         </div>
         <div className={styles.navGroup}>
@@ -311,6 +299,8 @@ export default function Dashboard() {
       </header>
 
       <main className={styles.content}>
+        {route === 'home' ? (
+          <>
         <section className={styles.kpiGrid}>
           <Card className={styles.kpiCard}>
             <CardHeader
@@ -441,6 +431,10 @@ export default function Dashboard() {
             </div>
           </div>
         </Card>
+          </>
+        ) : (
+          <Accounts />
+        )}
       </main>
 
       <Dialog open={!!selected} onOpenChange={(_, d) => d.type === 'close' && setSelected(null)}>
